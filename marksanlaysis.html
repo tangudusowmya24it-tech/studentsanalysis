@@ -1,0 +1,988 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduTrack - Student Mark Analysis</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background: #f3f5fb;
+    color: #26334d;
+}
+
+/* LOGIN PAGE */
+
+#loginPage {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #171c50, #5554c9, #9c65db);
+}
+
+.login-box {
+    background: white;
+    padding: 40px;
+    width: 360px;
+    max-width: 92%;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 15px 40px #171c5060;
+}
+
+.logo {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.login-box h2 {
+    color: #252d69;
+    margin-bottom: 8px;
+}
+
+.login-box p {
+    color: #888;
+    margin-bottom: 25px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 13px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.login-box input:focus {
+    border-color: #6565d8;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 15px;
+    background: #5554c9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-box button:hover {
+    background: #3434a2;
+}
+
+#loginError {
+    color: red;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+/* MAIN DASHBOARD */
+
+#dashboard {
+    display: none;
+}
+
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #202452;
+    color: white;
+    position: fixed;
+    padding: 25px 15px;
+    left: 0;
+    top: 0;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    color: #a9a5ff;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 14px;
+    margin: 5px 0;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+    background: #5554c9;
+}
+
+.main {
+    margin-left: 240px;
+    padding: 30px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.topbar h1 {
+    font-size: 25px;
+    color: #252d69;
+}
+
+.logout {
+    padding: 10px 18px;
+    background: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+/* SECTIONS */
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+    color: #252d69;
+}
+
+/* DASHBOARD CARDS */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 13px;
+    box-shadow: 0 3px 15px #00000008;
+}
+
+.card .emoji {
+    font-size: 28px;
+}
+
+.card p {
+    color: #888;
+    margin: 10px 0;
+}
+
+.card h2 {
+    font-size: 27px;
+    margin: 0;
+    color: #4545bb;
+}
+
+/* FORMS */
+
+.form-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 700px;
+    margin-bottom: 25px;
+}
+
+.form-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+}
+
+.form-box label {
+    font-weight: 600;
+}
+
+.primary-btn {
+    padding: 12px 22px;
+    background: #5554c9;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+/* TABLE */
+
+.table-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #f0efff;
+    color: #4545bb;
+}
+
+.search {
+    padding: 12px;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+}
+
+.delete-btn {
+    padding: 7px 12px;
+    background: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.chart-box {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-top: 20px;
+    max-width: 750px;
+}
+
+.chart-box canvas {
+    max-height: 320px;
+}
+
+.result-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 650px;
+    margin-top: 20px;
+    line-height: 2;
+}
+
+@media(max-width: 900px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 650px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 10px;
+    }
+
+    .sidebar button {
+        width: 48%;
+        display: inline-block;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <div class="logo">🎓</div>
+
+        <h2>EduTrack</h2>
+        <p>Student Mark Analysis Portal</p>
+
+        <form onsubmit="login(event)">
+            <input type="text" id="username"
+                   placeholder="Enter Username" required>
+
+            <input type="password" id="password"
+                   placeholder="Enter Password" required>
+
+            <button type="submit">Login →</button>
+        </form>
+
+        <div id="loginError"></div>
+
+        <p style="font-size:12px;margin-top:20px">
+            Demo: admin / admin123
+        </p>
+
+    </div>
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>🎓 EduTrack</h2>
+
+        <button class="active" onclick="showPage('home',this)">
+            🏠 Dashboard
+        </button>
+
+        <button onclick="showPage('students',this)">
+            👨‍🎓 Students
+        </button>
+
+        <button onclick="showPage('add',this)">
+            ➕ Add Student
+        </button>
+
+        <button onclick="showPage('analysis',this)">
+            📊 Analysis
+        </button>
+
+        <button onclick="showPage('results',this)">
+            📄 Results
+        </button>
+
+    </div>
+
+
+    <div class="main">
+
+        <div class="topbar">
+            <div>
+                <h1>Student Performance Portal</h1>
+                <p>Welcome back, Administrator 👋</p>
+            </div>
+
+            <button class="logout" onclick="logout()">
+                Logout
+            </button>
+        </div>
+
+
+        <!-- HOME PAGE -->
+
+        <div id="home" class="section active">
+
+            <h2>Dashboard Overview</h2>
+
+            <div class="cards">
+
+                <div class="card">
+                    <div class="emoji">👨‍🎓</div>
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">0</h2>
+                </div>
+
+                <div class="card">
+                    <div class="emoji">📈</div>
+                    <p>Average Percentage</p>
+                    <h2 id="average">0%</h2>
+                </div>
+
+                <div class="card">
+                    <div class="emoji">✅</div>
+                    <p>Passed Students</p>
+                    <h2 id="passed">0</h2>
+                </div>
+
+                <div class="card">
+                    <div class="emoji">❌</div>
+                    <p>Failed Students</p>
+                    <h2 id="failed">0</h2>
+                </div>
+
+            </div>
+
+            <div class="chart-box">
+                <h3>📊 Student Performance</h3>
+                <canvas id="homeChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT LIST -->
+
+        <div id="students" class="section">
+
+            <h2>👨‍🎓 Student Records</h2>
+
+            <input type="text" class="search"
+                   id="search" placeholder="Search student..."
+                   oninput="displayStudents()">
+
+            <div class="table-box">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Total</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADD STUDENT -->
+
+        <div id="add" class="section">
+
+            <h2>➕ Add Student Details</h2>
+
+            <div class="form-box">
+
+                <form id="studentForm">
+
+                    <label>Student Name</label>
+                    <input type="text" id="studentName"
+                           placeholder="Enter full name" required>
+
+                    <label>Roll Number</label>
+                    <input type="text" id="roll"
+                           placeholder="Enter roll number" required>
+
+                    <label>Mathematics</label>
+                    <input type="number" id="math"
+                           min="0" max="100" required>
+
+                    <label>Science</label>
+                    <input type="number" id="science"
+                           min="0" max="100" required>
+
+                    <label>English</label>
+                    <input type="number" id="english"
+                           min="0" max="100" required>
+
+                    <label>Computer Science</label>
+                    <input type="number" id="computer"
+                           min="0" max="100" required>
+
+                    <label>Social Studies</label>
+                    <input type="number" id="social"
+                           min="0" max="100" required>
+
+                    <button type="submit" class="primary-btn">
+                        Save Student Details
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANALYSIS PAGE -->
+
+        <div id="analysis" class="section">
+
+            <h2>📊 Performance Analysis</h2>
+
+            <div class="chart-box">
+                <h3>Subject-wise Average Marks</h3>
+                <canvas id="subjectChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Pass vs Fail Analysis</h3>
+                <canvas id="resultChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- RESULTS PAGE -->
+
+        <div id="results" class="section">
+
+            <h2>📄 Student Result Report</h2>
+
+            <input type="text" id="resultSearch"
+                   class="search"
+                   placeholder="Enter roll number"
+                   oninput="findResult()">
+
+            <div id="resultOutput"></div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+// LOGIN
+
+function login(event) {
+
+    event.preventDefault();
+
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
+
+    if(user === "admin" && pass === "admin123") {
+
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+
+        updateDashboard();
+
+    } else {
+
+        document.getElementById("loginError").innerText =
+            "Invalid username or password!";
+
+    }
+}
+
+function logout() {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("loginPage").style.display = "flex";
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+}
+
+
+// STORE STUDENTS
+
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+function saveData() {
+    localStorage.setItem("students", JSON.stringify(students));
+}
+
+
+// CALCULATE MARKS
+
+function calculate(marks) {
+
+    let total = marks.reduce((a,b) => a+b, 0);
+    let percentage = total / marks.length;
+
+    let pass = marks.every(m => m >= 35);
+
+    let grade = "F";
+
+    if(pass) {
+        if(percentage >= 90) grade = "A+";
+        else if(percentage >= 80) grade = "A";
+        else if(percentage >= 70) grade = "B";
+        else if(percentage >= 60) grade = "C";
+        else grade = "D";
+    }
+
+    return {
+        total,
+        percentage,
+        grade,
+        status: pass ? "PASS" : "FAIL"
+    };
+}
+
+
+// ADD STUDENT
+
+document.getElementById("studentForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    let name = document.getElementById("studentName").value.trim();
+    let roll = document.getElementById("roll").value.trim();
+
+    let marks = [
+        Number(document.getElementById("math").value),
+        Number(document.getElementById("science").value),
+        Number(document.getElementById("english").value),
+        Number(document.getElementById("computer").value),
+        Number(document.getElementById("social").value)
+    ];
+
+    if(!name || !roll ||
+       marks.some(m => !Number.isFinite(m) || m < 0 || m > 100)) {
+        alert("Please enter valid student details and marks.");
+        return;
+    }
+
+    if(students.some(s => s.roll.toLowerCase() === roll.toLowerCase())) {
+        alert("Roll number already exists!");
+        return;
+    }
+
+    let result = calculate(marks);
+
+    students.push({
+        name,
+        roll,
+        marks,
+        ...result
+    });
+
+    saveData();
+
+    alert("Student added successfully!");
+
+    this.reset();
+
+    updateDashboard();
+
+    showPage("students",
+        document.querySelectorAll(".sidebar button")[1]);
+
+});
+
+
+// DISPLAY STUDENTS
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+function displayStudents() {
+
+    let search = document.getElementById("search")
+        .value.toLowerCase();
+
+    let table = document.getElementById("studentTable");
+
+    table.innerHTML = "";
+
+    let filtered = students.filter(s =>
+        s.name.toLowerCase().includes(search) ||
+        s.roll.toLowerCase().includes(search)
+    );
+
+    filtered.forEach((s) => {
+
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${escapeHTML(s.name)}</td>
+            <td>${escapeHTML(s.roll)}</td>
+            <td>${s.total}/500</td>
+            <td>${s.percentage.toFixed(2)}%</td>
+            <td>${s.grade}</td>
+            <td>${s.status}</td>
+            <td>
+                <button class="delete-btn"
+                onclick="deleteStudent('${encodeURIComponent(s.roll)}')">
+                Delete
+                </button>
+            </td>
+        `;
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+// DELETE STUDENT
+
+function deleteStudent(encodedRoll) {
+
+    let roll = decodeURIComponent(encodedRoll);
+
+    if(confirm("Are you sure you want to delete this student?")) {
+
+        students = students.filter(s => s.roll !== roll);
+
+        saveData();
+
+        updateDashboard();
+
+    }
+}
+
+
+// UPDATE DASHBOARD
+
+function updateDashboard() {
+
+    let total = students.length;
+
+    let pass = students.filter(s => s.status === "PASS").length;
+
+    let fail = total - pass;
+
+    let average = total ?
+        students.reduce((sum,s) => sum+s.percentage,0)/total : 0;
+
+    document.getElementById("totalStudents").innerText = total;
+
+    document.getElementById("passed").innerText = pass;
+
+    document.getElementById("failed").innerText = fail;
+
+    document.getElementById("average").innerText =
+        average.toFixed(2) + "%";
+
+    displayStudents();
+
+    updateCharts();
+}
+
+
+// NAVIGATION
+
+function showPage(page, button) {
+
+    document.querySelectorAll(".section")
+    .forEach(s => s.classList.remove("active"));
+
+    document.getElementById(page).classList.add("active");
+
+    document.querySelectorAll(".sidebar button")
+    .forEach(b => b.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if(page === "analysis") updateCharts();
+
+    if(page === "results") findResult();
+}
+
+
+// CHARTS
+
+let charts = {};
+
+function createChart(id, type, labels, data, label) {
+
+    let canvas = document.getElementById(id);
+
+    if(charts[id]) charts[id].destroy();
+
+    charts[id] = new Chart(canvas, {
+        type: type,
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: label,
+                data: data,
+                backgroundColor: [
+                    "#615ce7",
+                    "#36b8b1",
+                    "#ffae57",
+                    "#e875a0",
+                    "#8a76d8"
+                ],
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
+}
+
+
+function updateCharts() {
+
+    let pass = students.filter(s => s.status === "PASS").length;
+
+    let fail = students.length - pass;
+
+    createChart(
+        "homeChart",
+        "bar",
+        ["Passed", "Failed"],
+        [pass, fail],
+        "Students"
+    );
+
+    let subjects = [
+        "Mathematics",
+        "Science",
+        "English",
+        "Computer",
+        "Social"
+    ];
+
+    let averages = subjects.map((sub, index) => {
+
+        if(students.length === 0) return 0;
+
+        let sum = students.reduce(
+            (total, s) => total + s.marks[index], 0
+        );
+
+        return Number((sum / students.length).toFixed(2));
+
+    });
+
+    createChart(
+        "subjectChart",
+        "bar",
+        subjects,
+        averages,
+        "Average Marks"
+    );
+
+    createChart(
+        "resultChart",
+        "doughnut",
+        ["Passed", "Failed"],
+        [pass, fail],
+        "Student Results"
+    );
+}
+
+
+// SEARCH RESULT
+
+function findResult() {
+
+    let roll = document.getElementById("resultSearch")
+        .value.trim().toLowerCase();
+
+    let output = document.getElementById("resultOutput");
+
+    if(!roll) {
+        output.innerHTML = "";
+        return;
+    }
+
+    let student = students.find(
+        s => s.roll.toLowerCase() === roll
+    );
+
+    if(!student) {
+        output.innerHTML = "<p>No student found!</p>";
+        return;
+    }
+
+    let subjects = [
+        "Mathematics",
+        "Science",
+        "English",
+        "Computer Science",
+        "Social Studies"
+    ];
+
+    let rows = subjects.map((sub,i) => `
+        <tr>
+            <td>${sub}</td>
+            <td>${student.marks[i]}</td>
+        </tr>
+    `).join("");
+
+    output.innerHTML = `
+        <div class="result-card">
+
+            <h2>🎓 Academic Result</h2>
+
+            <p><b>Student Name:</b> ${escapeHTML(student.name)}</p>
+            <p><b>Roll Number:</b> ${escapeHTML(student.roll)}</p>
+
+            <table>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                </tr>
+                ${rows}
+            </table>
+
+            <h3>Total: ${student.total}/500</h3>
+
+            <h3>Percentage:
+            ${student.percentage.toFixed(2)}%</h3>
+
+            <h3>Grade: ${student.grade}</h3>
+
+            <h3>Result: ${student.status}</h3>
+
+            <button class="primary-btn"
+            onclick="window.print()">
+            Print Result
+            </button>
+
+        </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>
